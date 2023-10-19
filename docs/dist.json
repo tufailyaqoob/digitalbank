@@ -1,0 +1,434 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Digital Bank API V1",
+    "version": "1.0.0",
+    "description": "Open Connect is a modern, integrated and a highly scalable payment switch platform with an efficient service-oriented architecture approach. The platform is completely independent and has a multiplayer design. The core technology for messaging is based on Queue manager, which is a highly scalable MQ system, which can be horizontally scaled to run on a cluster of machines. The deployment can be done on Virtual environment as well as containerized environment.",
+    "license": {
+      "name": "Paysys Labs",
+      "url": "https://www.paysyslabs.com/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://apigw.paysyslabs.com/api",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "jwtToken": []
+    }
+  ],
+  "paths": {
+    "/v1/paysyslabs/token": {
+      "post": {
+        "summary": "Authentication",
+        "tags": [
+          "OPEN CONNECT"
+        ],
+        "description": "This method is secure and includes enhancements that allow for more robust security mechanisms, which will ensure that the Open Connect integration is secure and reliable.\n\n\nThis is also the centralized authentication mechanism for all the APIs exposed by Open Connect. This will be running as a separate application on specific port.",
+        "operationId": "authenticate",
+        "security": [
+          {
+            "clientCredentials": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/grant_type"
+          },
+          {
+            "$ref": "#/components/parameters/client_id"
+          },
+          {
+            "$ref": "#/components/parameters/client_secret"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JWT token generated successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "access_token": "token",
+                  "expires_in": 300,
+                  "token_type": "Bearer"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "description": "This token will be used in all APIs in header with header name “Authorization”. Token value will be followed by Bearer"
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "description": "The value is in seconds"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "description": "Bearer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "unauthorized",
+                  "status": 401
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/paysyslabs/payments/unifiedtitlefetch": {
+      "post": {
+        "summary": "unifiedtitlefetch",
+        "tags": [
+          "OPEN CONNECT"
+        ],
+        "description": "The unified title fetch is a generic method to get beneficiary (receiver) account details from the member bank.The method is having a following two additional functionalities compare to standard title fetch method:\n\n\n1- Preferred Rail: The initiator has provision to set the preferred rail either the title fetch will be done via RAAST or 1LINK. The request parameter will identify the preferred route\n\n\n2- Fall-back option: In case if title fetch failed with the preferred rail the system will auto attempt the title fetch from alternate rail. The option is controllable via request parameters.",
+        "operationId": "unifiedtitlefetch",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "response": {
+                    "response_code": "0000",
+                    "response_desc": "SUCCESS"
+                  },
+                  "info": {
+                    "stan": "010123",
+                    "rrn": "010123010123",
+                    "correlationId": "7ad7fb9f-99dc-4c2c-ab88-abddb87789a0"
+                  },
+                  "accountInfo": {
+                    "title": "Muhammad Khan",
+                    "toAccount": "00653000129536",
+                    "destinationPaymentSystem": "01",
+                    "iban": "PK30BANK0012000230000000"
+                  },
+                  "participantInfo": {
+                    "bankIMD": "100271",
+                    "bankBIC": "NBPBPKKA"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "response_code": {
+                      "type": "string",
+                      "minLength": 4,
+                      "maxLength": 4,
+                      "description": "Response code for the request"
+                    },
+                    "response_desc": {
+                      "type": "string",
+                      "minLength": 40,
+                      "maxLength": 40,
+                      "description": "Description for the respective response code"
+                    },
+                    "rrn": {
+                      "type": "string",
+                      "minLength": 12,
+                      "maxLength": 12,
+                      "description": "Echo back"
+                    },
+                    "stan": {
+                      "type": "string",
+                      "minLength": 6,
+                      "maxLength": 6,
+                      "description": "Echo back"
+                    },
+                    "correlationId": {
+                      "type": "string",
+                      "minLength": 40,
+                      "maxLength": 40,
+                      "description": "Unique correlation id for the title fetch request. The value is in GUID format and will be sent by the initiator in payment call."
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 40,
+                      "maxLength": 40,
+                      "description": "Beneficiary account title"
+                    },
+                    "toAccount": {
+                      "type": "string",
+                      "minLength": 24,
+                      "maxLength": 24,
+                      "description": "Echo back"
+                    },
+                    "destinationPaymentSystem": {
+                      "type": "string",
+                      "minLength": 2,
+                      "maxLength": 2,
+                      "description": "Identify the route from which title fetch has completed. \n\nThe values are as:\n\n\n\"01\" – For RAAST\n\n\n\"02\" – For 1LINK"
+                    },
+                    "iban": {
+                      "type": "string",
+                      "minLength": 24,
+                      "maxLength": 24,
+                      "description": "Beneficiary IBAN, the value will be returned if received from the scheme in response of title fetch"
+                    },
+                    "bankIMD": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8,
+                      "description": "Receiving participant MID (Member bank id), assigned by 1LINK"
+                    },
+                    "bankBIC": {
+                      "type": "string",
+                      "minLength": 16,
+                      "maxLength": 16,
+                      "description": "Receiving participant BIC (bank institution code), assigned by SBP"
+                    }
+                  },
+                  "required": [
+                    "response_code",
+                    "response_desc",
+                    "rrn",
+                    "stan",
+                    "correlationId"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No account found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "response": {
+                    "response_code": "1001",
+                    "response_desc": "No account found"
+                  },
+                  "stan": "010123",
+                  "rrn": "010123010123",
+                  "correlationId": "7ad7fb9f-99dc-4c2c-ab88-abddb87789a0"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "unauthorized",
+                  "status": 401
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedTitleFetch"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "jwtToken": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "clientCredentials": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://apigw.paysyslabs.com/api/v1/paysyslabs/token",
+            "scopes": {}
+          }
+        }
+      }
+    },
+    "parameters": {
+      "grant_type": {
+        "name": "grant_type",
+        "in": "query",
+        "required": true,
+        "example": "client_credentials",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "client_id": {
+        "name": "client_id",
+        "in": "query",
+        "required": true,
+        "description": "client_id will be provided by PSL TEAM based on channel",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "client_secret": {
+        "name": "client_secret",
+        "in": "query",
+        "required": true,
+        "description": "client_secret will be provided by PSL TEAM based on channel",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "UnifiedTitleFetch": {
+        "description": "Representation of a Unified Title Fetch",
+        "type": "object",
+        "properties": {
+          "rrn": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 12,
+            "description": "Retrieval reference number",
+            "example": "002236987456"
+          },
+          "stan": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 6,
+            "description": "System trace audit number",
+            "example": "987456"
+          },
+          "txndate": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 8,
+            "format": "yyyymmdd",
+            "description": "Transaction Date",
+            "example": "20231015"
+          },
+          "txntime": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 6,
+            "format": "hhmmss",
+            "description": "Transaction Time",
+            "example": "182243"
+          },
+          "fromAccount": {
+            "type": "string",
+            "minLength": 24,
+            "maxLength": 24,
+            "description": "Sender IBAN",
+            "example": "05421236547552"
+          },
+          "fromAccountType": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2,
+            "description": "Sender account type (LOVs)",
+            "example": "00"
+          },
+          "fromAccountCurrency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "3 digits ISO8583 universal currency code",
+            "example": "586"
+          },
+          "bankId": {
+            "type": "integer",
+            "description": "Bank Id returned by the OC in get bank list service response",
+            "example": 1
+          },
+          "toAccount": {
+            "type": "string",
+            "minLength": 24,
+            "maxLength": 24,
+            "description": "Beneficiary account# or IBAN",
+            "example": "00023137343951"
+          },
+          "priorityFlag": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2,
+            "description": "The field determine the priority rail to perform title fetch.\n\n\nThe values are as:\n\n\n\"01\" – For RAAST\n\n\n\"02\" – For 1LINK",
+            "example": "01"
+          },
+          "fallbackFlag": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2,
+            "description": "The field determine the fall back feature for the title fetch in case title fetch failed from \nthe 1st switch system will attempt to perform it from alternate route if fall back parameter \nset to “Yes”.\n\n\nThe values are as:\n\n\n\"01\" – Yes\n\n\n\"02\" – No",
+            "example": "01"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the transaction, it is required as per EFT compliant that receiver must validate credit limit on title fetch to minimize rejection ratio while payment",
+            "example": "5000"
+          },
+          "r1": {
+            "type": "string",
+            "minLength": 100,
+            "maxLength": 100,
+            "description": "Reserved for future use",
+            "example": "reserved one"
+          },
+          "r2": {
+            "type": "string",
+            "minLength": 100,
+            "maxLength": 100,
+            "description": "Reserved for future use",
+            "example": "reserved two"
+          },
+          "r3": {
+            "type": "string",
+            "minLength": 100,
+            "maxLength": 100,
+            "description": "Reserved for future use",
+            "example": "reserved three"
+          },
+          "r4": {
+            "type": "string",
+            "minLength": 100,
+            "maxLength": 100,
+            "description": "Reserved for future use",
+            "example": "reserved four"
+          },
+          "r5": {
+            "type": "string",
+            "minLength": 100,
+            "maxLength": 100,
+            "description": "Reserved for future use",
+            "example": "reserved five"
+          }
+        },
+        "required": [
+          "rrn",
+          "stan",
+          "txndate",
+          "txntime",
+          "fromAccount",
+          "fromAccountType",
+          "fromAccountCurrency",
+          "bankId",
+          "toAccount",
+          "priorityFlag",
+          "fallbackFlag",
+          "amount"
+        ]
+      }
+    }
+  }
+}

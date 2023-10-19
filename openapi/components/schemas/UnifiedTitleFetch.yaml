@@ -1,0 +1,148 @@
+description: Representation of a Unified Title Fetch
+type: object
+properties:
+  rrn:
+    type: string
+    minLength: 12
+    maxLength: 12
+    description: Retrieval reference number
+    example: '002236987456'
+  stan:
+    type: string
+    minLength: 6
+    maxLength: 6
+    description: System trace audit number
+    example: '987456'
+  txndate:
+    type: string
+    minLength: 8
+    maxLength: 8
+    format: yyyymmdd
+    description: Transaction Date
+    example: '20231015'
+  txntime:
+    type: string
+    minLength: 6
+    maxLength: 6
+    format: hhmmss
+    description: Transaction Time
+    example: '182243'
+  fromAccount:
+    type: string
+    minLength: 24
+    maxLength: 24
+    description: Sender IBAN
+    example: '05421236547552'
+  fromAccountType:
+    type: string
+    minLength: 2
+    maxLength: 2
+    description: Sender account type (LOVs)
+    example: '00'
+  fromAccountCurrency:
+    type: string
+    minLength: 3
+    maxLength: 3
+    description: 3 digits ISO8583 universal currency code
+    example: '586'
+  bankId:
+    type: integer
+    description: Bank Id returned by the OC in get bank list service response
+    example: 1
+  toAccount:
+    type: string
+    minLength: 24
+    maxLength: 24
+    description: Beneficiary account# or IBAN
+    example: '00023137343951'
+  priorityFlag:
+    type: string
+    minLength: 2
+    maxLength: 2
+    description: |-
+      The field determine the priority rail to perform title fetch.
+
+
+      The values are as:
+
+
+      "01" – For RAAST
+
+
+      "02" – For 1LINK
+    example: '01'
+  fallbackFlag:
+    type: string
+    minLength: 2
+    maxLength: 2
+    description: >-
+      The field determine the fall back feature for the title fetch in case
+      title fetch failed from 
+
+      the 1st switch system will attempt to perform it from alternate route if
+      fall back parameter 
+
+      set to “Yes”.
+
+
+
+      The values are as:
+
+
+
+      "01" – Yes
+
+
+
+      "02" – No
+    example: '01'
+  amount:
+    type: number
+    description: >-
+      Amount of the transaction, it is required as per EFT compliant that
+      receiver must validate credit limit on title fetch to minimize rejection
+      ratio while payment
+    example: '5000'
+  r1:
+    type: string
+    minLength: 100
+    maxLength: 100
+    description: Reserved for future use
+    example: reserved one
+  r2:
+    type: string
+    minLength: 100
+    maxLength: 100
+    description: Reserved for future use
+    example: reserved two
+  r3:
+    type: string
+    minLength: 100
+    maxLength: 100
+    description: Reserved for future use
+    example: reserved three
+  r4:
+    type: string
+    minLength: 100
+    maxLength: 100
+    description: Reserved for future use
+    example: reserved four
+  r5:
+    type: string
+    minLength: 100
+    maxLength: 100
+    description: Reserved for future use
+    example: reserved five
+required:
+  - rrn
+  - stan
+  - txndate
+  - txntime
+  - fromAccount
+  - fromAccountType
+  - fromAccountCurrency
+  - bankId
+  - toAccount
+  - priorityFlag
+  - fallbackFlag
+  - amount

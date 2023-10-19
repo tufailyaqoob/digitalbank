@@ -1,0 +1,6 @@
+name: grant_type
+in: query
+required: true
+example: client_credentials
+schema:
+  type: string
